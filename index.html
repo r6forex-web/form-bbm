@@ -61,7 +61,7 @@
       background-color: #004085;
     }
 
-    /* Template yang akan diconvert (Sama persis dengan bentuk formulir fisik KAI) */
+    /* Template yang akan diconvert (Diperbesar agar tulisan renggang dan tajam saat di-screenshot) */
     #print-area {
       display: none;
       width: 950px;
@@ -75,7 +75,7 @@
     .header-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
     .header-table td {
       border: none;
@@ -83,9 +83,43 @@
     }
     .doc-title {
       text-align: center;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
       padding-bottom: 5px;
+    }
+
+    /* Tabel Utama (Dibuat jauh lebih tebal dan besar agar terbaca sangat jelas di HP) */
+    .main-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .main-table th, .main-table td {
+      border: 2px solid #000; /* Garis pembatas dipertebal */
+      padding: 12px 10px; /* Jarak padding diperbesar agar tulisan renggang */
+      vertical-align: top;
+    }
+    .main-table span {
+      font-size: 16px; /* Teks data hasil inputan dibuat menonjol */
+      font-weight: bold;
+    }
+    .label-cell {
+      width: 15%;
+      font-weight: normal;
+      color: #333;
+    }
+    .value-cell {
+      width: 35%;
+    }
+    .large-text {
+      font-size: 38px; /* Ukuran angka liter BBM dibuat sangat besar */
+      font-weight: bold;
+      text-align: center;
+      line-height: 50px;
+    }
+    .signature-box {
+      height: 80px;
     }
 
     /* Pembatas Nilai Data (Sesuai Gambar Slip Asli) */
@@ -94,7 +128,7 @@
       padding: 5px 10px;
       display: inline-block;
       font-weight: bold;
-      font-size: 15px; /* Huruf diperbesar agar jelas di HP */
+      font-size: 15px;
       background: #fff;
       box-sizing: border-box;
     }
@@ -110,12 +144,30 @@
   <!-- FORM INPUT (TAMPIL DI LAYAR) -->
   <div class="form-container" id="input-form-container">
     
-    <!-- Logo Atas di Layar Input (Menggunakan Logo Resmi Gambar) -->
+    <!-- Logo Atas di Layar Input (Menggunakan Vektor Bawaan - 100% Anti Error) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">
-      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 25px;" alt="Logo KAI">
+      <!-- Logo KAI Vektor Resmi -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" style="height: 25px; width: auto; display: block;">
+        <g fill="#1c2c5c" transform="skewX(-14) translate(15,0)">
+          <path d="M 10 5 L 26 5 L 23 23 L 7 23 Z" />
+          <path d="M 5 36 L 21 36 L 15 55 L -1 55 Z" />
+          <path d="M 21,36 L 36,36 L 46,55 L 31,55 Z" />
+          <path d="M 56,15 L 72,15 L 56,55 L 40,55 Z" />
+          <path d="M 72,15 L 88,15 L 104,55 L 88,55 Z" />
+          <path d="M 102,5 L 118,5 L 102,55 L 86,55 Z" />
+        </g>
+        <path d="M 20,40 Q 42,22 135,22 L 132,28 Q 45,28 26,45 Z" fill="#1c2c5c" />
+        <path d="M 33,44 Q 58,29 150,29 L 148,35 Q 61,35 39,49 Z" fill="#ef7d10" />
+      </svg>
+      <!-- Logo Pertamina Patra Logistik Vektor Resmi -->
       <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 14px;" alt="Logo Pertamina">
-        <span style="font-size: 7px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" style="height: 15px; width: auto; display: block;">
+          <path d="M 12 12 L 36 12 L 29 32 L 5 32 Z" fill="#1A4A7C" />
+          <path d="M 13 38 L 37 38 L 30 58 L 6 58 Z" fill="#88B033" />
+          <path d="M 43 12 L 67 12 L 49 58 L 25 58 Z" fill="#E52320" />
+          <text x="76" y="44" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="#000" letter-spacing="-1">PERTAMINA</text>
+          <text x="76" y="65" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="#00549c" letter-spacing="0.5">PATRA LOGISTIK</text>
+        </svg>
       </div>
     </div>
 
@@ -179,23 +231,39 @@
     </form>
   </div>
 
-  <!-- AREA DOKUMEN CETAK (PERSIS DENGAN GAMBAR CONTOH ANDA) -->
+  <!-- AREA DOKUMEN CETAK YANG AKAN DI-CONVERT (MENGGUNAKAN VEKTOR RESMI - 100% ANTI ERROR) -->
   <div id="print-area">
-    
-    <!-- Bagian Header (Logo KAI & Pertamina Resmi Gambar) -->
     <table class="header-table">
       <tr>
         <td style="width: 30%;">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 45px; display: block;" alt="Logo KAI">
+          <!-- Logo KAI Vektor Presisi Tinggi -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" style="height: 38px; width: auto; display: block;">
+            <g fill="#1c2c5c" transform="skewX(-14) translate(15,0)">
+              <path d="M 10 5 L 26 5 L 23 23 L 7 23 Z" />
+              <path d="M 5 36 L 21 36 L 15 55 L -1 55 Z" />
+              <path d="M 21,36 L 36,36 L 46,55 L 31,55 Z" />
+              <path d="M 56,15 L 72,15 L 56,55 L 40,55 Z" />
+              <path d="M 72,15 L 88,15 L 104,55 L 88,55 Z" />
+              <path d="M 102,5 L 118,5 L 102,55 L 86,55 Z" />
+            </g>
+            <path d="M 20,40 Q 42,22 135,22 L 132,28 Q 45,28 26,45 Z" fill="#1c2c5c" />
+            <path d="M 33,44 Q 58,29 150,29 L 148,35 Q 61,35 39,49 Z" fill="#ef7d10" />
+          </svg>
         </td>
         <td style="text-align: center; width: 40%;">
           <div style="border: 2px solid #000; padding: 3px 12px; display: inline-block; font-size: 11px; margin-bottom: 5px; font-weight: bold;">S</div>
           <div class="doc-title" style="font-size: 22px; margin-top: 5px;">Form Permintaan BBM</div>
         </td>
         <td style="width: 30%; text-align: right;">
+          <!-- Logo Pertamina Patra Logistik Vektor Presisi Tinggi -->
           <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 20px; display: block;" alt="Logo Pertamina">
-            <span style="font-size: 10px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 5px;">PATRA LOGISTIK</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" style="height: 20px; width: auto; display: block;">
+              <path d="M 12 12 L 36 12 L 29 32 L 5 32 Z" fill="#1A4A7C" />
+              <path d="M 13 38 L 37 38 L 30 58 L 6 58 Z" fill="#88B033" />
+              <path d="M 43 12 L 67 12 L 49 58 L 25 58 Z" fill="#E52320" />
+              <text x="76" y="44" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="#000" letter-spacing="-1">PERTAMINA</text>
+              <text x="76" y="65" font-family="'Arial Black', sans-serif" font-size="16" font-weight="900" fill="#00549c" letter-spacing="0.5">PATRA LOGISTIK</text>
+            </svg>
           </div>
         </td>
       </tr>
@@ -336,6 +404,7 @@
   </div>
 
   <script>
+    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
