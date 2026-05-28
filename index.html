@@ -285,23 +285,23 @@
     </table>
   </div>
 
-  <!-- MODAL POPUP UNTUK HP (MENAMPILKAN GAMBAR DAN OPSI SIMPAN) -->
+  <!-- MODAL POPUP UNTUK HP -->
   <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; overflow-y: auto; padding: 10px; box-sizing: border-box;">
     <div style="background: white; padding: 15px; border-radius: 8px; max-width: 95%; text-align: center; box-sizing: border-box;">
       <h3 style="color: #0056b3; margin-top: 0; font-size: 16px;">Hasil Form Permintaan BBM</h3>
       
-      <!-- TOMBOL SIMPAN LANGSUNG -->
-      <button id="downloadBtnHP" style="background: #2e7d32; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 8px;">
+      <!-- TOMBOL SIMPAN LANGSUNG (Sembunyi otomatis di APK untuk cegah crash) -->
+      <button id="downloadBtnHP" style="background: #2e7d32; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 8px; display: none;">
         💾 Simpan Gambar ke Galeri HP
       </button>
 
-      <!-- TOMBOL BAGIKAN (WHATSAPP, PHOTOS, DRIVE, DLL) -->
+      <!-- TOMBOL BAGIKAN (Aman digunakan di APK / Browser HP) -->
       <button id="shareBtnHP" style="background: #0288d1; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 12px; display: none;">
         📲 Bagikan / Kirim Gambar (WA / Drive / Lainnya)
       </button>
 
       <p style="font-size: 10px; color: #666; margin-bottom: 12px; line-height: 1.3; background: #f5f5f5; padding: 6px; border-radius: 4px; text-align: left;">
-        * <em>Catatan: Jika tombol hijau di atas tidak merespons di HP Anda, Anda masih bisa melakukan <strong>sentuh lama (tekan & tahan) gambarnya</strong> lalu pilih <strong>"Simpan Gambar"</strong>, atau langsung lakukan <strong>Screenshot</strong>.</em>
+        * <em>Catatan: Untuk menyimpan ke Galeri HP, silakan klik tombol biru <strong>"Bagikan / Kirim Gambar"</strong> lalu pilih <strong>WhatsApp/Drive/Simpan ke Files</strong>, atau Anda juga bisa langsung melakukan <strong>Screenshot</strong> / <strong>sentuh lama gambarnya</strong>.</em>
       </p>
       
       <!-- Wadah penampung gambar -->
@@ -349,7 +349,7 @@
         });
     });
 
-    // Fungsi pembantu untuk mengubah URL Gambar Data menjadi objek File asli untuk fitur Berbagi
+    // Helper untuk mengubah URL Gambar Data menjadi objek File asli untuk fitur Berbagi
     function dataURLtoFile(dataurl, filename) {
       var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
           bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -421,19 +421,29 @@
             const container = document.getElementById('modalImageContainer');
             container.innerHTML = `<img src="${imgDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hasil Form BBM">`;
             
-            // Konfigurasi aksi Tombol Simpan Gambar di HP
-            const downloadBtnHP = document.getElementById('downloadBtnHP');
-            downloadBtnHP.onclick = () => {
-              const link = document.createElement('a');
-              link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
-              link.href = imgDataUrl;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            };
+            // Deteksi apakah sedang dibuka di APK (biasanya mengandung 'wv' atau 'Version' tanpa Chrome di Android)
+            const isWebView = navigator.userAgent.includes('wv') || (navigator.userAgent.includes('Android') && navigator.userAgent.includes('Version/'));
 
-            // Konfigurasi tombol "Bagikan" (jika perangkat mendukung Web Share API)
+            const downloadBtnHP = document.getElementById('downloadBtnHP');
             const shareBtnHP = document.getElementById('shareBtnHP');
+
+            if (isWebView) {
+              // Jika di dalam APK: SEMBUNYIKAN tombol hijau untuk mencegah crash
+              downloadBtnHP.style.display = 'none';
+            } else {
+              // Jika di browser HP biasa (Chrome/Safari): Tampilkan tombol hijau karena browser aman dari crash
+              downloadBtnHP.style.display = 'block';
+              downloadBtnHP.onclick = () => {
+                const link = document.createElement('a');
+                link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
+                link.href = imgDataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              };
+            }
+
+            // Tombol "Bagikan" (Web Share API) - 100% aman digunakan di APK & Browser HP
             try {
               const file = dataURLtoFile(imgDataUrl, `Permintaan_BBM_${payload.noReservasi}.png`);
               if (navigator.canShare && navigator.canShare({ files: [file] })) {
