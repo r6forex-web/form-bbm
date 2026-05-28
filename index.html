@@ -139,7 +139,17 @@
 
   <!-- FORM INPUT (TAMPIL DI LAYAR) -->
   <div class="form-container" id="input-form-container">
-    <h2 style="text-align: center; margin-top: 0;">Input Permintaan BBM</h2>
+    
+    <!-- Logo Atas di Layar Input agar Terlihat Langsung -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">
+      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 25px;" alt="Logo KAI">
+      <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 14px;" alt="Logo Pertamina">
+        <span style="font-size: 7px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
+      </div>
+    </div>
+
+    <h2 style="text-align: center; margin-top: 0; font-size: 20px; color: #333;">Input Permintaan BBM</h2>
     <div id="loadingText" style="text-align: center; color: #0056b3; font-weight: bold; margin-bottom: 15px;">
       Mengambil nomor otomatis terakhir...
     </div>
@@ -288,7 +298,6 @@
   </div>
 
   <script>
-    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
@@ -308,7 +317,6 @@
       document.getElementById('inTglReservasi').value = tanggalSekarang;
       document.getElementById('inTglOrder').value = tanggalSekarang;
 
-      // Mengambil nomor otomatis dari Apps Script
       fetch(WEB_APP_URL)
         .then(response => response.json())
         .then(data => {
