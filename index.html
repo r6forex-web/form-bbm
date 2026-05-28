@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Permintaan BBM</title>
   
-  <!-- Pustaka html2pdf untuk konversi otomatis ke PDF (di Komputer) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Pustaka html2canvas untuk merubah formulir menjadi GAMBAR/FOTO berkualitas tinggi -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     body {
@@ -61,50 +61,42 @@
       background-color: #004085;
     }
 
-    /* Template yang akan dicetak */
+    /* Template yang akan diconvert (Diperbesar agar tulisan renggang dan tajam saat di-screenshot) */
     #print-area {
       display: none;
-      width: 100%;
-      max-width: 1000px;
+      width: 950px;
       margin: 0 auto;
       background-color: #fff;
-      padding: 10px;
+      padding: 25px;
+      box-sizing: border-box;
     }
 
     /* Struktur Dokumen Cetak */
     .header-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
     .header-table td {
       border: none;
       vertical-align: middle;
     }
-    .logo-kai {
-      height: 32px;
-      display: block;
-    }
-    .logo-pertamina {
-      height: 18px;
-      display: block;
-    }
     .doc-title {
       text-align: center;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       padding-bottom: 5px;
     }
 
-    /* Tabel Utama */
+    /* Tabel Utama (Font ditingkatkan ke 13px agar sangat jelas terbaca) */
     .main-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11px;
+      font-size: 13px;
     }
     .main-table th, .main-table td {
       border: 1px solid #000;
-      padding: 6px;
+      padding: 8px;
       vertical-align: top;
     }
     .label-cell {
@@ -115,28 +107,13 @@
       width: 35%;
     }
     .large-text {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
       text-align: center;
-      line-height: 40px;
+      line-height: 50px;
     }
     .signature-box {
-      height: 70px;
-    }
-
-    /* CSS Khusus Saat Cetak Bawaan HP */
-    @media print {
-      body {
-        background-color: #fff;
-        margin: 0;
-        padding: 0;
-      }
-      .form-container, button {
-        display: none !important;
-      }
-      #print-area {
-        display: block !important;
-      }
+      height: 80px;
     }
   </style>
 </head>
@@ -153,6 +130,7 @@
         <span style="font-size: 7px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
       </div>
     </div>
+
 
     <h2 style="text-align: center; margin-top: 0; font-size: 20px; color: #333;">Input Permintaan BBM</h2>
     <div id="loadingText" style="text-align: center; color: #0056b3; font-weight: bold; margin-bottom: 15px;">
@@ -176,8 +154,11 @@
         <input type="text" id="inDipo" placeholder="Contoh: PUK PS. SENEN" required>
       </div>
       <div class="form-group">
-        <label>Data KA / No. NPK</label>
-        <input type="text" id="inDataKa" placeholder="Contoh: 90" required>
+        <label>Data KA (Cukup ketik nomornya saja)</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="font-weight: bold; background: #e9ecef; padding: 8px; border: 1px solid #ccc; border-radius: 4px; color: #333;">KA</span>
+          <input type="text" id="inDataKa" placeholder="Contoh: 7009" required style="flex: 1;">
+        </div>
       </div>
       <div class="form-group">
         <label>Material</label>
@@ -211,28 +192,37 @@
     </form>
   </div>
 
-  <!-- AREA DOKUMEN CETAK (PERSIS DENGAN GAMBAR + LOGO) -->
+  <!-- AREA DOKUMEN CETAK YANG AKAN DI-CONVERT (MENGGUNAKAN LOGO RESMI VEKTOR) -->
   <div id="print-area">
     <table class="header-table">
       <tr>
-        <td style="width: 25%;">
-          <!-- Logo KAI Resmi -->
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" class="logo-kai" alt="Logo KAI">
+        <td style="width: 30%;">
+          <!-- Logo KAI Vektor Resmi (100% Anti-Pecah & Error) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" style="height: 38px; width: auto; display: block;">
+            <text x="75" y="48" font-family="'Arial Black', 'Impact', sans-serif" font-size="44" font-weight="900" font-style="italic" fill="#1c2c5c" letter-spacing="-2">KAI</text>
+            <path d="M 15,50 C 35,34 70,22 120,22 L 118,29 C 72,29 42,40 20,55 Z" fill="#1c2c5c" />
+            <path d="M 32,54 C 55,40 90,28 135,28 L 133,35 C 92,35 60,46 36,60 Z" fill="#ef7d10" />
+          </svg>
         </td>
-        <td style="text-align: center; width: 50%;">
+        <td style="text-align: center; width: 40%;">
           <div style="border: 1px solid #000; padding: 2px 8px; display: inline-block; font-size: 10px; margin-bottom: 5px; font-weight: bold;">S</div>
           <div class="doc-title">Form Permintaan BBM</div>
         </td>
-        <td style="width: 25%; text-align: right;">
-          <!-- Logo Pertamina Resmi + Sub-teks Patra Logistik -->
+        <td style="width: 30%; text-align: right;">
+          <!-- Logo Pertamina Patra Niaga Vektor Resmi (100% Anti-Pecah & Error) -->
           <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" class="logo-pertamina" alt="Logo Pertamina">
-            <span style="font-size: 8px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" style="height: 20px; width: auto; display: block;">
+              <path d="M 12 12 L 36 12 L 29 32 L 5 32 Z" fill="#1A4A7C" />
+              <path d="M 13 38 L 37 38 L 30 58 L 6 58 Z" fill="#88B033" />
+              <path d="M 43 12 L 67 12 L 49 58 L 25 58 Z" fill="#E52320" />
+              <text x="76" y="40" font-family="'Arial Black', sans-serif" font-size="30" font-weight="900" fill="#000000" letter-spacing="-1">PERTAMINA</text>
+              <text x="76" y="65" font-family="'Arial Black', sans-serif" font-size="19" font-weight="900" fill="#E52320" letter-spacing="0">PATRA NIAGA</text>
+            </svg>
           </div>
         </td>
       </tr>
       <tr>
-        <td colspan="3" style="font-size: 8px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 3px; padding-top: 5px;">
+        <td colspan="3" style="font-size: 9px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 3px; padding-top: 5px;">
           Diisi Oleh PT. Kereta Api Indonesia (Persero)
         </td>
       </tr>
@@ -302,7 +292,25 @@
     </table>
   </div>
 
+  <!-- MODAL POPUP UNTUK HP (STABIL & BEBAS CRASH) -->
+  <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; overflow-y: auto; padding: 10px; box-sizing: border-box;">
+    <div style="background: white; padding: 15px; border-radius: 8px; max-width: 95%; text-align: center; box-sizing: border-box;">
+      <h3 style="color: #0056b3; margin-top: 0; font-size: 16px;">Hasil Form Permintaan BBM</h3>
+      
+      <p style="font-size: 11px; color: #333; margin-bottom: 15px; font-weight: bold; background: #e8f5e9; border: 1px solid #c8e6c9; padding: 8px; border-radius: 4px; line-height: 1.4; text-align: left;">
+        ✅ <strong>Data Berhasil Disimpan ke Google Sheets!</strong><br>
+        📸 Silakan ambil <strong>SCREENSHOT (Tangkapan Layar)</strong> pada gambar slip di bawah ini untuk menyimpannya ke Galeri HP Anda.
+      </p>
+      
+      <!-- Wadah penampung gambar -->
+      <div id="modalImageContainer" style="border: 1px solid #ccc; padding: 5px; background: white; width: 100%; box-sizing: border-box; overflow-x: auto;"></div>
+      
+      <button onclick="closeModal()" style="margin-top: 15px; background: #d32f2f; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: auto; font-weight: bold;">Tutup & Buat Form Baru</button>
+    </div>
+  </div>
+
   <script>
+    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
@@ -332,7 +340,7 @@
           document.getElementById('loadingText').style.display = 'none';
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Simpan & Simpan PDF';
+          submitBtn.innerText = 'Simpan & Buat Gambar';
         })
         .catch(error => {
           console.error('Error fetching auto number:', error);
@@ -340,29 +348,37 @@
         });
     });
 
+    function closeModal() {
+      document.getElementById('imageModal').style.display = 'none';
+      window.location.reload();
+    }
+
     document.getElementById('bbmForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Menyimpan & Membuat PDF...';
+      submitBtn.innerText = 'Menyimpan & Membuat Gambar...';
+
+      // Penggabungan otomatis "KA " + Angka yang diketik
+      const rawDataKa = document.getElementById('inDataKa').value.trim();
+      const formattedDataKa = `KA ${rawDataKa}`;
 
       const payload = {
         noReservasi: document.getElementById('inNoReservasi').value,
         tglReservasi: document.getElementById('inTglReservasi').value,
-        noSarana: document.getElementById('inNoSarana').value,
-        dipoPengisian: document.getElementById('inDipo').value,
-        dataKa: document.getElementById('inDataKa').value,
+        noSarana: document.getElementById('inNoSarana').value.toUpperCase(),
+        dipoPengisian: document.getElementById('inDipo').value.toUpperCase(),
+        dataKa: formattedDataKa, // Menggunakan format otomatis (Contoh: KA 7009)
         material: document.getElementById('inMaterial').value,
         noOrder: document.getElementById('inNoOrder').value,
         tglOrder: document.getElementById('inTglOrder').value,
         jumlahBbm: parseFloat(document.getElementById('inJumlahBbm').value).toFixed(2),
-        keterangan: document.getElementById('inKeterangan').value,
-        peminta: document.getElementById('inPeminta').value,
+        keterangan: document.getElementById('inKeterangan').value.toUpperCase(),
+        peminta: document.getElementById('inPeminta').value.toUpperCase(), // Nama otomatis HURUF BESAR SEMUA
         nippPeminta: document.getElementById('inNippPeminta').value
       };
 
-      // Terapkan data ke area cetak
       document.getElementById('pNoReservasi').innerText = payload.noReservasi;
       document.getElementById('pTglReservasi').innerText = payload.tglReservasi;
       document.getElementById('pNoSarana').innerText = payload.noSarana;
@@ -373,7 +389,7 @@
       document.getElementById('pTglOrder').innerText = payload.tglOrder;
       document.getElementById('pJumlahBbm').innerText = payload.jumlahBbm;
       document.getElementById('pKeterangan').innerText = payload.keterangan;
-      document.getElementById('pPeminta').innerText = payload.peminta.toUpperCase();
+      document.getElementById('pPeminta').innerText = payload.peminta;
       document.getElementById('pNippPeminta').innerText = payload.nippPeminta;
 
       // Kirim data ke Google Sheets (POST)
@@ -389,44 +405,40 @@
         const printArea = document.getElementById('print-area');
         printArea.style.display = 'block';
 
-        // Deteksi Pintar: Apakah dibuka lewat HP (termasuk APK) atau Komputer biasa
-        const isHP = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-        if (isHP) {
-          // JIKA DI HP / APK: Pemicu dialog cetak bawaan HP (User bisa simpan sebagai PDF ke folder manapun di HP)
-          window.print();
+        // Konversi ke gambar (Menggunakan scale: 3 untuk ketajaman tinggi agar tulisan terbaca jelas)
+        html2canvas(printArea, { useCORS: true, scale: 3 }).then(canvas => {
+          printArea.style.display = 'none';
           
-          setTimeout(() => {
-            printArea.style.display = 'none';
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Simpan & Simpan PDF';
-            window.location.reload();
-          }, 1000);
-          
-        } else {
-          // JIKA DI KOMPUTER: Download PDF otomatis menggunakan html2pdf
-          const opt = {
-            margin:       [15, 15, 15, 15],
-            filename:     `Permintaan_BBM_${payload.noReservasi}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
-          };
+          const imgDataUrl = canvas.toDataURL('image/png');
+          const isHP = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-          html2pdf().set(opt).from(printArea).save().then(() => {
-            printArea.style.display = 'none';
+          if (isHP) {
+            const container = document.getElementById('modalImageContainer');
+            container.innerHTML = `<img src="${imgDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hasil Form BBM">`;
+            document.getElementById('imageModal').style.display = 'flex';
+            
             submitBtn.disabled = false;
-            submitBtn.innerText = 'Simpan & Simpan PDF';
+            submitBtn.innerText = 'Simpan & Buat Gambar';
+          } else {
+            // Jika di komputer, otomatis langsung download
+            const link = document.createElement('a');
+            link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
+            link.href = imgDataUrl;
+            link.click();
+            
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Simpan & Buat Gambar';
+            
             setTimeout(() => {
               window.location.reload();
             }, 1000);
-          });
-        }
+          }
+        });
       })
       .catch(error => {
         alert('Gagal menyimpan: ' + error);
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Simpan & Simpan PDF';
+        submitBtn.innerText = 'Simpan & Buat Gambar';
       });
     });
   </script>
