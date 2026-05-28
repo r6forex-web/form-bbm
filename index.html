@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Permintaan BBM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+    }
+    
+    /* Container Input Form */
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-group input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+    button {
+      background-color: #0056b3;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #004085;
+    }
+
+    /* Template yang akan dicetak */
+    #print-area {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #fff;
+    }
+
+    /* Struktur Dokumen Cetak */
+    .header-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+    .header-table td {
+      border: none;
+      vertical-align: middle;
+    }
+    .doc-title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+    }
+
+    /* Tabel Utama */
+    .main-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .main-table th, .main-table td {
+      border: 1px solid #000;
+      padding: 6px;
+      vertical-align: top;
+    }
+    .label-cell {
+      width: 15%;
+      font-weight: normal;
+    }
+    .value-cell {
+      width: 35%;
+    }
+    .large-text {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 40px;
+    }
+    .signature-box {
+      height: 70px;
+    }
+
+    /* CSS Khusus Saat Cetak */
+    @media print {
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      .form-container, button {
+        display: none !important;
+      }
+      #print-area {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FORM INPUT (TAMPIL DI LAYAR) -->
+  <div class="form-container" id="input-form-container">
+    <h2 style="text-align: center; margin-top: 0;">Input Permintaan BBM</h2>
+    <div id="loadingText" style="text-align: center; color: #0056b3; font-weight: bold; margin-bottom: 15px;">
+      Mengambil nomor otomatis terakhir...
+    </div>
+    <form id="bbmForm">
+      <div class="form-group">
+        <label>No. Reservasi (Otomatis)</label>
+        <input type="text" id="inNoReservasi" readonly required>
+      </div>
+      <div class="form-group">
+        <label>Tgl Reservasi (Otomatis)</label>
+        <input type="text" id="inTglReservasi" readonly required>
+      </div>
+      <div class="form-group">
+        <label>No. Sarana</label>
+        <input type="text" id="inNoSarana" placeholder="Contoh: P02413" required>
+      </div>
+      <div class="form-group">
+        <label>Dipo Pengisian</label>
+        <input type="text" id="inDipo" placeholder="Contoh: PUK PS. SENEN" required>
+      </div>
+      <div class="form-group">
+        <label>Data KA / No. NPK</label>
+        <input type="text" id="inDataKa" placeholder="Contoh: 90" required>
+      </div>
+      <div class="form-group">
+        <label>Material</label>
+        <input type="text" id="inMaterial" value="BIO SOLAR (SUBSIDI)" readonly required>
+      </div>
+      <div class="form-group">
+        <label>No. Order (Otomatis)</label>
+        <input type="text" id="inNoOrder" readonly required>
+      </div>
+      <div class="form-group">
+        <label>Tgl. Order (Otomatis)</label>
+        <input type="text" id="inTglOrder" readonly required>
+      </div>
+      <div class="form-group">
+        <label>Jumlah BBM (Liter)</label>
+        <input type="number" step="0.01" id="inJumlahBbm" placeholder="Contoh: 800.00" required>
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <input type="text" id="inKeterangan" value="KA PENUMPANG">
+      </div>
+      <div class="form-group">
+        <label>Nama Peminta</label>
+        <input type="text" id="inPeminta" placeholder="Nama Anda" required>
+      </div>
+      <div class="form-group">
+        <label>NIPP Peminta</label>
+        <input type="text" id="inNippPeminta" placeholder="Nomor NIPP" required>
+      </div>
+      <button type="submit" id="submitBtn" disabled>Mohon Tunggu...</button>
+    </form>
+  </div>
+
+  <!-- AREA DOKUMEN CETAK -->
+  <div id="print-area">
+    <table class="header-table">
+      <tr>
+        <td style="width: 25%;">
+          <strong style="color: #0d47a1; font-style: italic; font-size: 18px;">KAI</strong>
+        </td>
+        <td style="text-align: center; width: 50%;">
+          <div style="border: 1px solid #000; padding: 2px 8px; display: inline-block; font-size: 10px; margin-bottom: 5px;">S</div>
+          <div class="doc-title">Form Permintaan BBM</div>
+        </td>
+        <td style="text-align: right; width: 25%; font-size: 9px; line-height: 1.1;">
+          <strong style="color: #0d47a1;">PERTAMINA</strong><br>
+          <span style="color: #e53935; font-weight: bold; font-size: 7px;">PATRA LOGISTIK</span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3" style="font-size: 8px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px;">
+          Diisi Oleh PT. Kereta Api Indonesia (Persero)
+        </td>
+      </tr>
+    </table>
+
+    <table class="main-table">
+      <tr>
+        <td style="width: 70%; padding: 0; border: none;">
+          <table style="width: 100%; border-collapse: collapse; border: none;">
+            <tr>
+              <td class="label-cell" style="border-top: none; border-left: none;">No Reservasi</td>
+              <td class="value-cell" style="border-top: none;"><span id="pNoReservasi"></span></td>
+              <td class="label-cell" style="border-top: none;">Material</td>
+              <td class="value-cell" style="border-top: none; border-right: none;"><span id="pMaterial"></span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="border-left: none;">Tgl Reservasi</td>
+              <td><span id="pTglReservasi"></span></td>
+              <td class="label-cell">No. Order</td>
+              <td style="border-right: none;"><span id="pNoOrder"></span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="border-left: none;">No Sarana</td>
+              <td><span id="pNoSarana"></span></td>
+              <td class="label-cell">Tgl. Order</td>
+              <td style="border-right: none;"><span id="pTglOrder"></span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="border-left: none;">Dipo Pengisian</td>
+              <td colspan="3" style="border-right: none;"><span id="pDipo"></span></td>
+            </tr>
+            <tr>
+              <td class="label-cell" style="border-bottom: none; border-left: none;">Data KA / No. NPK</td>
+              <td class="label-cell" style="border-bottom: none; font-weight: bold; text-align: center;">Jumlah BBM :</td>
+              <td class="label-cell" style="border-bottom: none;">Keterangan</td>
+              <td style="border-bottom: none; border-right: none;"></td>
+            </tr>
+            <tr>
+              <td style="border-bottom: none; border-left: none; height: 50px;"><span id="pDataKa"></span></td>
+              <td class="large-text" style="border-bottom: none;"><span id="pJumlahBbm"></span></td>
+              <td colspan="2" style="border-bottom: none; border-right: none;"><span id="pKeterangan"></span></td>
+            </tr>
+          </table>
+        </td>
+        <td style="width: 30%; padding: 0; border-top: none; border-right: none; border-bottom: none;">
+          <table style="width: 100%; border-collapse: collapse; border: none;">
+            <tr>
+              <td style="border-top: none; border-left: none; border-right: none; height: 95px;">
+                <div style="font-weight: bold;">Peminta</div>
+                <div style="text-align: right; font-size: 8px;">TTD</div>
+                <div class="signature-box"></div>
+                <div><strong id="pPeminta"></strong></div>
+                <div>NIPP: <span id="pNippPeminta"></span></div>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-left: none; border-right: none; border-bottom: none; height: 95px; border-top: 1px solid #000;">
+                <div style="font-weight: bold;">Pemberi</div>
+                <div style="text-align: right; font-size: 8px;">TTD</div>
+                <div class="signature-box"></div>
+                <div>NIPP: </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    // MASUKKAN URL WEB APP ANDA DI SINI
+    const WEB_APP_URL = 'URL_WEB_APP_ANDA_DISINI';
+
+    // Fungsi untuk membuat format tanggal hari ini bahasa Indonesia (Contoh: 24 Mei 2026)
+    function getTanggalHariIni() {
+      const namaBulan = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      const hariIni = new Date();
+      const tanggal = hariIni.getDate();
+      const bulan = namaBulan[hariIni.getMonth()];
+      const tahun = hariIni.getFullYear();
+      return `${tanggal} ${bulan} ${tahun}`;
+    }
+
+    // Fungsi yang otomatis berjalan saat halaman dibuka
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Isi Tanggal otomatis
+      const tanggalSekarang = getTanggalHariIni();
+      document.getElementById('inTglReservasi').value = tanggalSekarang;
+      document.getElementById('inTglOrder').value = tanggalSekarang;
+
+      // 2. Ambil No Reservasi & No Order berikutnya dari Google Sheets
+      fetch(WEB_APP_URL)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('inNoReservasi').value = data.nextReservasi;
+          document.getElementById('inNoOrder').value = data.nextOrder;
+          
+          // Sembunyikan teks loading, aktifkan tombol submit
+          document.getElementById('loadingText').style.display = 'none';
+          const submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Simpan & Cetak';
+        })
+        .catch(error => {
+          console.error('Error fetching auto number:', error);
+          document.getElementById('loadingText').innerText = 'Gagal memuat nomor otomatis. Coba segarkan halaman.';
+        });
+    });
+
+    // Handle submit form
+    document.getElementById('bbmForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Menyimpan...';
+
+      const payload = {
+        noReservasi: document.getElementById('inNoReservasi').value,
+        tglReservasi: document.getElementById('inTglReservasi').value,
+        noSarana: document.getElementById('inNoSarana').value,
+        dipoPengisian: document.getElementById('inDipo').value,
+        dataKa: document.getElementById('inDataKa').value,
+        material: document.getElementById('inMaterial').value,
+        noOrder: document.getElementById('inNoOrder').value,
+        tglOrder: document.getElementById('inTglOrder').value,
+        jumlahBbm: parseFloat(document.getElementById('inJumlahBbm').value).toFixed(2),
+        keterangan: document.getElementById('inKeterangan').value,
+        peminta: document.getElementById('inPeminta').value,
+        nippPeminta: document.getElementById('inNippPeminta').value
+      };
+
+      // Terapkan ke area cetak
+      document.getElementById('pNoReservasi').innerText = payload.noReservasi;
+      document.getElementById('pTglReservasi').innerText = payload.tglReservasi;
+      document.getElementById('pNoSarana').innerText = payload.noSarana;
+      document.getElementById('pDipo').innerText = payload.dipoPengisian;
+      document.getElementById('pDataKa').innerText = payload.dataKa;
+      document.getElementById('pMaterial').innerText = payload.material;
+      document.getElementById('pNoOrder').innerText = payload.noOrder;
+      document.getElementById('pTglOrder').innerText = payload.tglOrder;
+      document.getElementById('pJumlahBbm').innerText = payload.jumlahBbm;
+      document.getElementById('pKeterangan').innerText = payload.keterangan;
+      document.getElementById('pPeminta').innerText = payload.peminta.toUpperCase();
+      document.getElementById('pNippPeminta').innerText = payload.nippPeminta;
+
+      // Kirim data ke Google Sheets
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Simpan & Cetak';
+        
+        // Buka dialog print
+        window.print();
+        
+        // Segarkan halaman setelah print agar nomor otomatisnya memperbarui ke nomor berikutnya
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch(error => {
+        alert('Gagal menyimpan: ' + error);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Simpan & Cetak';
+      });
+    });
+  </script>
+</body>
+</html>
