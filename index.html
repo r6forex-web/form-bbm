@@ -81,14 +81,6 @@
       border: none;
       vertical-align: middle;
     }
-    .logo-kai {
-      height: 35px;
-      display: block;
-    }
-    .logo-pertamina {
-      height: 20px;
-      display: block;
-    }
     .doc-title {
       text-align: center;
       font-size: 16px;
@@ -123,21 +115,6 @@
     .signature-box {
       height: 70px;
     }
-
-    /* CSS Khusus Saat Cetak Bawaan HP */
-    @media print {
-      body {
-        background-color: #fff;
-        margin: 0;
-        padding: 0;
-      }
-      .form-container, button {
-        display: none !important;
-      }
-      #print-area {
-        display: block !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -145,11 +122,22 @@
   <!-- FORM INPUT (TAMPIL DI LAYAR) -->
   <div class="form-container" id="input-form-container">
     
-    <!-- Logo Atas di Layar Input -->
+    <!-- Header Logo atas di Layar Input (Menggunakan Vektor Bawaan/SVG) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">
-      <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 25px;" alt="Logo KAI">
+      <!-- Logo KAI Vektor -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 55" style="height: 25px; width: auto; display: block;">
+        <path d="M10,40 C25,22 55,10 90,10 L85,18 C55,18 32,28 20,40 Z" fill="#0D47A1" />
+        <path d="M28,40 C43,30 68,22 103,22 L98,30 C70,30 48,37 38,40 Z" fill="#FF6D00" />
+        <text x="105" y="38" font-family="'Arial Black', Gadget, sans-serif" font-size="30" font-weight="900" font-style="italic" fill="#0D47A1">KAI</text>
+      </svg>
+      <!-- Logo Pertamina Vektor -->
       <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 14px;" alt="Logo Pertamina">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" style="height: 14px; width: auto; display: block;">
+          <path d="M35,10 L60,10 L45,50 L20,50 Z" fill="#E53935" />
+          <path d="M10,10 L32,10 L25,30 L3,30 Z" fill="#1E88E5" />
+          <path d="M11,35 L33,35 L26,55 L4,55 Z" fill="#4CAF50" />
+          <text x="75" y="46" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="#0D47A1">PERTAMINA</text>
+        </svg>
         <span style="font-size: 7px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
       </div>
     </div>
@@ -176,8 +164,11 @@
         <input type="text" id="inDipo" placeholder="Contoh: PUK PS. SENEN" required>
       </div>
       <div class="form-group">
-        <label>Data KA / No. NPK</label>
-        <input type="text" id="inDataKa" placeholder="Contoh: 90" required>
+        <label>Data KA (Cukup ketik nomornya saja)</label>
+        <div style="display: flex; align-items: center; gap: 5px;">
+          <span style="font-weight: bold; background: #e9ecef; padding: 8px; border: 1px solid #ccc; border-radius: 4px; color: #333;">KA</span>
+          <input type="text" id="inDataKa" placeholder="Contoh: 7009" required style="flex: 1;">
+        </div>
       </div>
       <div class="form-group">
         <label>Material</label>
@@ -211,20 +202,31 @@
     </form>
   </div>
 
-  <!-- AREA KERTAS DOKUMEN YANG AKAN DI-CONVERT -->
+  <!-- AREA KERTAS DOKUMEN YANG AKAN DI-CONVERT (MENGGUNAKAN LOGO VEKTOR RESMI) -->
   <div id="print-area">
     <table class="header-table">
       <tr>
-        <td style="width: 25%;">
-          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" class="logo-kai" alt="Logo KAI">
+        <td style="width: 30%;">
+          <!-- Logo KAI Vektor Resmi (100% Anti Error) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 55" style="height: 35px; width: auto; display: block;">
+            <path d="M10,40 C25,22 55,10 90,10 L85,18 C55,18 32,28 20,40 Z" fill="#0D47A1" />
+            <path d="M28,40 C43,30 68,22 103,22 L98,30 C70,30 48,37 38,40 Z" fill="#FF6D00" />
+            <text x="105" y="38" font-family="'Arial Black', Gadget, sans-serif" font-size="30" font-weight="900" font-style="italic" fill="#0D47A1">KAI</text>
+          </svg>
         </td>
-        <td style="text-align: center; width: 50%;">
+        <td style="text-align: center; width: 40%;">
           <div style="border: 1px solid #000; padding: 2px 8px; display: inline-block; font-size: 10px; margin-bottom: 5px; font-weight: bold;">S</div>
           <div class="doc-title">Form Permintaan BBM</div>
         </td>
-        <td style="width: 25%; text-align: right;">
+        <td style="width: 30%; text-align: right;">
+          <!-- Logo Pertamina Vektor Resmi (100% Anti Error) -->
           <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" class="logo-pertamina" alt="Logo Pertamina">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" style="height: 18px; width: auto; display: block;">
+              <path d="M35,10 L60,10 L45,50 L20,50 Z" fill="#E53935" />
+              <path d="M10,10 L32,10 L25,30 L3,30 Z" fill="#1E88E5" />
+              <path d="M11,35 L33,35 L26,55 L4,55 Z" fill="#4CAF50" />
+              <text x="75" y="46" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" fill="#0D47A1">PERTAMINA</text>
+            </svg>
             <span style="font-size: 8px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
           </div>
         </td>
@@ -300,18 +302,14 @@
     </table>
   </div>
 
-  <!-- MODAL POPUP UNTUK HP (BEBAS CRASH) -->
+  <!-- MODAL POPUP (STABIL & BEBAS CRASH) -->
   <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; overflow-y: auto; padding: 10px; box-sizing: border-box;">
     <div style="background: white; padding: 15px; border-radius: 8px; max-width: 95%; text-align: center; box-sizing: border-box;">
       <h3 style="color: #0056b3; margin-top: 0; font-size: 16px;">Hasil Form Permintaan BBM</h3>
       
-      <!-- TOMBOL CETAK / SIMPAN SEBAGAI PDF BAWAAN HP (100% AMAN & BEBAS CRASH) -->
-      <button id="printBtnHP" style="background: #2e7d32; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 12px;">
-        🖨️ Cetak / Simpan sebagai PDF (Sistem HP)
-      </button>
-
-      <p style="font-size: 11px; color: #333; margin-bottom: 12px; line-height: 1.4; background: #e3f2fd; padding: 8px; border-radius: 4px; text-align: left;">
-        👉 <strong>Untuk menyimpan sebagai FOTO ke Galeri HP:</strong> Silakan lakukan <strong>Screenshot</strong> pada gambar slip di bawah ini, atau <strong>sentuh lama (tekan & tahan) gambarnya</strong> lalu pilih "Simpan Gambar".
+      <p style="font-size: 11px; color: #333; margin-bottom: 15px; font-weight: bold; background: #e8f5e9; border: 1px solid #c8e6c9; padding: 8px; border-radius: 4px; line-height: 1.4; text-align: left;">
+        ✅ <strong>Data Berhasil Disimpan ke Google Sheets!</strong><br>
+        📸 Silakan ambil <strong>SCREENSHOT (Tangkapan Layar)</strong> pada gambar slip di bawah ini untuk menyimpannya ke Galeri HP Anda.
       </p>
       
       <!-- Wadah penampung gambar -->
@@ -371,18 +369,22 @@
       submitBtn.disabled = true;
       submitBtn.innerText = 'Menyimpan & Membuat Gambar...';
 
+      // Penggabungan otomatis "KA " + Angka yang diketik
+      const rawDataKa = document.getElementById('inDataKa').value.trim();
+      const formattedDataKa = `KA ${rawDataKa}`;
+
       const payload = {
         noReservasi: document.getElementById('inNoReservasi').value,
         tglReservasi: document.getElementById('inTglReservasi').value,
-        noSarana: document.getElementById('inNoSarana').value,
-        dipoPengisian: document.getElementById('inDipo').value,
-        dataKa: document.getElementById('inDataKa').value,
+        noSarana: document.getElementById('inNoSarana').value.toUpperCase(),
+        dipoPengisian: document.getElementById('inDipo').value.toUpperCase(),
+        dataKa: formattedDataKa, // Menggunakan format otomatis (Contoh: KA 7009)
         material: document.getElementById('inMaterial').value,
         noOrder: document.getElementById('inNoOrder').value,
         tglOrder: document.getElementById('inTglOrder').value,
         jumlahBbm: parseFloat(document.getElementById('inJumlahBbm').value).toFixed(2),
-        keterangan: document.getElementById('inKeterangan').value,
-        peminta: document.getElementById('inPeminta').value,
+        keterangan: document.getElementById('inKeterangan').value.toUpperCase(),
+        peminta: document.getElementById('inPeminta').value.toUpperCase(), // Nama otomatis HURUF BESAR SEMUA
         nippPeminta: document.getElementById('inNippPeminta').value
       };
 
@@ -396,9 +398,10 @@
       document.getElementById('pTglOrder').innerText = payload.tglOrder;
       document.getElementById('pJumlahBbm').innerText = payload.jumlahBbm;
       document.getElementById('pKeterangan').innerText = payload.keterangan;
-      document.getElementById('pPeminta').innerText = payload.peminta.toUpperCase();
+      document.getElementById('pPeminta').innerText = payload.peminta;
       document.getElementById('pNippPeminta').innerText = payload.nippPeminta;
 
+      // Kirim data ke Google Sheets (POST)
       fetch(WEB_APP_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -411,6 +414,7 @@
         const printArea = document.getElementById('print-area');
         printArea.style.display = 'block';
 
+        // Konversi ke gambar
         html2canvas(printArea, { useCORS: true, scale: 2 }).then(canvas => {
           printArea.style.display = 'none';
           
@@ -420,18 +424,12 @@
           if (isHP) {
             const container = document.getElementById('modalImageContainer');
             container.innerHTML = `<img src="${imgDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hasil Form BBM">`;
-            
-            // Konfigurasi aksi Tombol Cetak Bawaan HP (Sangat aman, tidak akan crash)
-            const printBtnHP = document.getElementById('printBtnHP');
-            printBtnHP.onclick = () => {
-              window.print();
-            };
-
             document.getElementById('imageModal').style.display = 'flex';
             
             submitBtn.disabled = false;
             submitBtn.innerText = 'Simpan & Buat Gambar';
           } else {
+            // Jika di komputer, otomatis langsung download
             const link = document.createElement('a');
             link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
             link.href = imgDataUrl;
