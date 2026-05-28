@@ -123,6 +123,21 @@
     .signature-box {
       height: 70px;
     }
+
+    /* CSS Khusus Saat Cetak Bawaan HP */
+    @media print {
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      .form-container, button {
+        display: none !important;
+      }
+      #print-area {
+        display: block !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -285,23 +300,18 @@
     </table>
   </div>
 
-  <!-- MODAL POPUP UNTUK HP -->
+  <!-- MODAL POPUP UNTUK HP (BEBAS CRASH) -->
   <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; overflow-y: auto; padding: 10px; box-sizing: border-box;">
     <div style="background: white; padding: 15px; border-radius: 8px; max-width: 95%; text-align: center; box-sizing: border-box;">
       <h3 style="color: #0056b3; margin-top: 0; font-size: 16px;">Hasil Form Permintaan BBM</h3>
       
-      <!-- TOMBOL SIMPAN LANGSUNG (Sembunyi otomatis di APK untuk cegah crash) -->
-      <button id="downloadBtnHP" style="background: #2e7d32; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 8px; display: none;">
-        💾 Simpan Gambar ke Galeri HP
+      <!-- TOMBOL CETAK / SIMPAN SEBAGAI PDF BAWAAN HP (100% AMAN & BEBAS CRASH) -->
+      <button id="printBtnHP" style="background: #2e7d32; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 12px;">
+        🖨️ Cetak / Simpan sebagai PDF (Sistem HP)
       </button>
 
-      <!-- TOMBOL BAGIKAN (Aman digunakan di APK / Browser HP) -->
-      <button id="shareBtnHP" style="background: #0288d1; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-bottom: 12px; display: none;">
-        📲 Bagikan / Kirim Gambar (WA / Drive / Lainnya)
-      </button>
-
-      <p style="font-size: 10px; color: #666; margin-bottom: 12px; line-height: 1.3; background: #f5f5f5; padding: 6px; border-radius: 4px; text-align: left;">
-        * <em>Catatan: Untuk menyimpan ke Galeri HP, silakan klik tombol biru <strong>"Bagikan / Kirim Gambar"</strong> lalu pilih <strong>WhatsApp/Drive/Simpan ke Files</strong>, atau Anda juga bisa langsung melakukan <strong>Screenshot</strong> / <strong>sentuh lama gambarnya</strong>.</em>
+      <p style="font-size: 11px; color: #333; margin-bottom: 12px; line-height: 1.4; background: #e3f2fd; padding: 8px; border-radius: 4px; text-align: left;">
+        👉 <strong>Untuk menyimpan sebagai FOTO ke Galeri HP:</strong> Silakan lakukan <strong>Screenshot</strong> pada gambar slip di bawah ini, atau <strong>sentuh lama (tekan & tahan) gambarnya</strong> lalu pilih "Simpan Gambar".
       </p>
       
       <!-- Wadah penampung gambar -->
@@ -348,16 +358,6 @@
           document.getElementById('loadingText').innerHTML = 'Gagal memuat nomor otomatis. Pastikan status penerapan Anda sudah diatur ke "Siapa saja" (Anyone).';
         });
     });
-
-    // Helper untuk mengubah URL Gambar Data menjadi objek File asli untuk fitur Berbagi
-    function dataURLtoFile(dataurl, filename) {
-      var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-      while(n--){
-          u8arr[n] = bstr.charCodeAt(n);
-      }
-      return new File([u8arr], filename, {type:mime});
-    }
 
     function closeModal() {
       document.getElementById('imageModal').style.display = 'none';
@@ -421,44 +421,11 @@
             const container = document.getElementById('modalImageContainer');
             container.innerHTML = `<img src="${imgDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hasil Form BBM">`;
             
-            // Deteksi apakah sedang dibuka di APK (biasanya mengandung 'wv' atau 'Version' tanpa Chrome di Android)
-            const isWebView = navigator.userAgent.includes('wv') || (navigator.userAgent.includes('Android') && navigator.userAgent.includes('Version/'));
-
-            const downloadBtnHP = document.getElementById('downloadBtnHP');
-            const shareBtnHP = document.getElementById('shareBtnHP');
-
-            if (isWebView) {
-              // Jika di dalam APK: SEMBUNYIKAN tombol hijau untuk mencegah crash
-              downloadBtnHP.style.display = 'none';
-            } else {
-              // Jika di browser HP biasa (Chrome/Safari): Tampilkan tombol hijau karena browser aman dari crash
-              downloadBtnHP.style.display = 'block';
-              downloadBtnHP.onclick = () => {
-                const link = document.createElement('a');
-                link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
-                link.href = imgDataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              };
-            }
-
-            // Tombol "Bagikan" (Web Share API) - 100% aman digunakan di APK & Browser HP
-            try {
-              const file = dataURLtoFile(imgDataUrl, `Permintaan_BBM_${payload.noReservasi}.png`);
-              if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                shareBtnHP.style.display = 'block';
-                shareBtnHP.onclick = () => {
-                  navigator.share({
-                    files: [file],
-                    title: 'Form BBM KAI',
-                    text: 'Form Permintaan Pengisian BBM KAI'
-                  }).catch(err => console.log('Share failed', err));
-                };
-              }
-            } catch (e) {
-              console.log('Share API tidak didukung pada browser ini', e);
-            }
+            // Konfigurasi aksi Tombol Cetak Bawaan HP (Sangat aman, tidak akan crash)
+            const printBtnHP = document.getElementById('printBtnHP');
+            printBtnHP.onclick = () => {
+              window.print();
+            };
 
             document.getElementById('imageModal').style.display = 'flex';
             
