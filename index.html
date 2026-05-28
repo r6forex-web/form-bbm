@@ -61,13 +61,13 @@
       background-color: #004085;
     }
 
-    /* Template yang akan diconvert (Diperbesar agar tulisan renggang dan tajam saat di-screenshot) */
+    /* Template yang akan diconvert (Sama persis dengan bentuk formulir fisik KAI) */
     #print-area {
       display: none;
       width: 950px;
       margin: 0 auto;
       background-color: #fff;
-      padding: 30px;
+      padding: 25px;
       box-sizing: border-box;
     }
 
@@ -75,7 +75,7 @@
     .header-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
     .header-table td {
       border: none;
@@ -83,43 +83,25 @@
     }
     .doc-title {
       text-align: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
       padding-bottom: 5px;
     }
 
-    /* Tabel Utama (Dibuat jauh lebih tebal dan besar agar terbaca sangat jelas di HP) */
-    .main-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
+    /* Pembatas Nilai Data (Sesuai Gambar Slip Asli) */
+    .value-box {
+      border: 2px solid #000;
+      padding: 5px 10px;
+      display: inline-block;
       font-weight: bold;
+      font-size: 15px; /* Huruf diperbesar agar jelas di HP */
+      background: #fff;
+      box-sizing: border-box;
     }
-    .main-table th, .main-table td {
-      border: 2px solid #000; /* Garis pembatas dipertebal */
-      padding: 12px 10px; /* Jarak padding diperbesar agar tulisan renggang */
-      vertical-align: top;
-    }
-    .main-table span {
-      font-size: 16px; /* Teks data hasil inputan dibuat menonjol */
+    
+    .label-text {
+      font-size: 14px;
       font-weight: bold;
-    }
-    .label-cell {
-      width: 15%;
-      font-weight: normal;
-      color: #333;
-    }
-    .value-cell {
-      width: 35%;
-    }
-    .large-text {
-      font-size: 38px; /* Ukuran angka liter BBM dibuat sangat besar */
-      font-weight: bold;
-      text-align: center;
-      line-height: 50px;
-    }
-    .signature-box {
-      height: 80px;
     }
   </style>
 </head>
@@ -128,7 +110,7 @@
   <!-- FORM INPUT (TAMPIL DI LAYAR) -->
   <div class="form-container" id="input-form-container">
     
-    <!-- Logo Atas di Layar Input (Menggunakan Coding Logo Bawaan Anda) -->
+    <!-- Logo Atas di Layar Input (Menggunakan Logo Resmi Gambar) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">
       <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 25px;" alt="Logo KAI">
       <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
@@ -197,22 +179,22 @@
     </form>
   </div>
 
-  <!-- AREA DOKUMEN CETAK YANG AKAN DI-CONVERT (MENGGUNAKAN LOGO BAWAAN DARI USER) -->
+  <!-- AREA DOKUMEN CETAK (PERSIS DENGAN GAMBAR CONTOH ANDA) -->
   <div id="print-area">
+    
+    <!-- Bagian Header (Logo KAI & Pertamina Resmi Gambar) -->
     <table class="header-table">
       <tr>
         <td style="width: 30%;">
-          <!-- Logo KAI Bawaan Gambar dari Anda -->
           <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 45px; display: block;" alt="Logo KAI">
         </td>
         <td style="text-align: center; width: 40%;">
-          <div style="border: 2px solid #000; padding: 4px 12px; display: inline-block; font-size: 11px; margin-bottom: 5px; font-weight: bold;">S</div>
-          <div class="doc-title" style="font-size: 22px; font-weight: bold; margin-top: 5px;">Form Permintaan BBM</div>
+          <div style="border: 2px solid #000; padding: 3px 12px; display: inline-block; font-size: 11px; margin-bottom: 5px; font-weight: bold;">S</div>
+          <div class="doc-title" style="font-size: 22px; margin-top: 5px;">Form Permintaan BBM</div>
         </td>
         <td style="width: 30%; text-align: right;">
-          <!-- Logo Pertamina Bawaan Gambar dari Anda + Patra Logistik -->
           <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
-            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 22px; display: block;" alt="Logo Pertamina">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" style="height: 20px; display: block;" alt="Logo Pertamina">
             <span style="font-size: 10px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 5px;">PATRA LOGISTIK</span>
           </div>
         </td>
@@ -224,68 +206,116 @@
       </tr>
     </table>
 
-    <table class="main-table">
-      <tr>
-        <td style="width: 70%; padding: 0; border: none;">
-          <table style="width: 100%; border-collapse: collapse; border: none;">
-            <tr>
-              <td class="label-cell" style="border-top: none; border-left: none;">No Reservasi</td>
-              <td class="value-cell" style="border-top: none;"><span id="pNoReservasi"></span></td>
-              <td class="label-cell" style="border-top: none;">Material</td>
-              <td class="value-cell" style="border-top: none; border-right: none;"><span id="pMaterial"></span></td>
-            </tr>
-            <tr>
-              <td class="label-cell" style="border-left: none;">Tgl Reservasi</td>
-              <td><span id="pTglReservasi"></span></td>
-              <td class="label-cell">No. Order</td>
-              <td style="border-right: none;"><span id="pNoOrder"></span></td>
-            </tr>
-            <tr>
-              <td class="label-cell" style="border-left: none;">No Sarana</td>
-              <td><span id="pNoSarana"></span></td>
-              <td class="label-cell">Tgl. Order</td>
-              <td style="border-right: none;"><span id="pTglOrder"></span></td>
-            </tr>
-            <tr>
-              <td class="label-cell" style="border-left: none;">Dipo Pengisian</td>
-              <td colspan="3" style="border-right: none;"><span id="pDipo"></span></td>
-            </tr>
-            <tr>
-              <td class="label-cell" style="border-bottom: none; border-left: none;">Data KA / No. NPK</td>
-              <td class="label-cell" style="border-bottom: none; font-weight: bold; text-align: center;">Jumlah BBM :</td>
-              <td class="label-cell" style="border-bottom: none;">Keterangan</td>
-              <td style="border-bottom: none; border-right: none;"></td>
-            </tr>
-            <tr>
-              <td style="border-bottom: none; border-left: none; height: 50px;"><span id="pDataKa"></span></td>
-              <td class="large-text" style="border-bottom: none;"><span id="pJumlahBbm"></span></td>
-              <td colspan="2" style="border-bottom: none; border-right: none;"><span id="pKeterangan"></span></td>
-            </tr>
-          </table>
-        </td>
-        <td style="width: 30%; padding: 0; border-top: none; border-right: none; border-bottom: none;">
-          <table style="width: 100%; border-collapse: collapse; border: none;">
-            <tr>
-              <td style="border-top: none; border-left: none; border-right: none; height: 95px;">
-                <div style="font-weight: bold;">Peminta</div>
-                <div style="text-align: right; font-size: 8px;">TTD</div>
-                <div class="signature-box"></div>
-                <div><strong id="pPeminta"></strong></div>
-                <div>NIPP: <span id="pNippPeminta"></span></div>
-              </td>
-            </tr>
-            <tr>
-              <td style="border-left: none; border-right: none; border-bottom: none; height: 95px; border-top: 1px solid #000;">
-                <div style="font-weight: bold;">Pemberi</div>
-                <div style="text-align: right; font-size: 8px;">TTD</div>
-                <div class="signature-box"></div>
-                <div>NIPP: </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <!-- Bagian Formulir Utama (Desain Tata Letak Kotak Presisi) -->
+    <div style="display: flex; gap: 15px; width: 100%; box-sizing: border-box; margin-top: 10px;">
+      
+      <!-- SISI KIRI (70% LEBAR) -->
+      <div style="width: 70%; display: flex; flex-direction: column; gap: 15px;">
+        
+        <!-- Blok Atas (No Reservasi, Material, Tgl Reservasi, No Order, No Sarana, Dipo, Tgl Order) -->
+        <div style="border: 2px solid #000; padding: 15px; display: flex; flex-direction: column; gap: 15px; box-sizing: border-box; height: 190px; justify-content: space-between; background: #fff;">
+          
+          <!-- Baris 1: No Reservasi & Material -->
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span class="label-text">No Reservasi</span>
+              <span style="font-weight: bold;">:</span>
+              <div class="value-box" style="min-width: 140px;"><span id="pNoReservasi"></span></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span class="label-text">Material :</span>
+              <div class="value-box" style="min-width: 310px;"><span id="pMaterial"></span></div>
+            </div>
+          </div>
+
+          <!-- Baris 2: Tgl Reservasi & No. Order -->
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span class="label-text">Tgl Reservasi</span>
+              <span style="font-weight: bold;">:</span>
+              <div class="value-box" style="min-width: 140px;"><span id="pTglReservasi"></span></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span class="label-text">No. Order :</span>
+              <div class="value-box" style="min-width: 130px; text-align: center;"><span id="pNoOrder"></span></div>
+            </div>
+          </div>
+
+          <!-- Baris 3: No Sarana, Dipo Pengisian & Tgl Order -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span class="label-text">No Sarana :</span>
+              <div class="value-box" style="min-width: 110px; text-align: center;"><span id="pNoSarana"></span></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 3px; flex: 1; margin-left: 10px; margin-right: 15px;">
+              <span class="label-text">Dipo Pengisian :</span>
+              <div class="value-box" style="width: 100%;"><span id="pDipo"></span></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+              <span class="label-text">Tgl. Order :</span>
+              <div class="value-box" style="min-width: 130px; text-align: center;"><span id="pTglOrder"></span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Blok Bawah (Data KA, Jumlah BBM, Keterangan) -->
+        <div style="display: flex; gap: 15px; width: 100%; height: 110px; box-sizing: border-box;">
+          
+          <!-- Box Data KA / No NPK -->
+          <div style="border: 2px solid #000; flex: 1; display: flex; flex-direction: column; background: #fff;">
+            <div style="border-bottom: 2px solid #000; padding: 5px 8px; font-size: 12px; font-weight: bold;">Data KA / No. NPK :</div>
+            <div style="padding: 15px 10px; font-weight: bold; font-size: 15px; flex: 1; display: flex; align-items: center;"><span id="pDataKa"></span></div>
+          </div>
+
+          <!-- Box Jumlah BBM -->
+          <div style="border: 2px solid #000; flex: 0.8; display: flex; flex-direction: column; background: #fff;">
+            <div style="border-bottom: 2px solid #000; padding: 5px 8px; font-size: 12px; font-weight: bold;">Jumlah BBM :</div>
+            <div style="padding: 5px; display: flex; align-items: center; justify-content: center; flex: 1;">
+              <span id="pJumlahBbm" style="font-size: 34px; font-weight: bold; letter-spacing: 0.5px;"></span>
+            </div>
+          </div>
+
+          <!-- Box Keterangan -->
+          <div style="border: 2px solid #000; flex: 1.4; display: flex; flex-direction: column; background: #fff;">
+            <div style="border-bottom: 2px solid #000; padding: 5px 8px; font-size: 12px; font-weight: bold;">Keterangan :</div>
+            <div style="padding: 15px 10px; font-weight: bold; font-size: 15px; flex: 1; display: flex; align-items: center;"><span id="pKeterangan"></span></div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SISI KANAN (30% LEBAR - KOTAK TANDA TANGAN) -->
+      <div style="width: 30%; display: flex; flex-direction: column; gap: 15px; box-sizing: border-box;">
+        
+        <!-- Box Peminta -->
+        <div style="border: 2px solid #000; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; height: 190px; box-sizing: border-box; background: #fff;">
+          <div style="display: flex; justify-content: space-between; width: 100%; font-size: 12px; font-weight: bold;">
+            <span>Peminta</span>
+            <span>TTD</span>
+          </div>
+          <div class="signature-box"></div>
+          <div style="font-size: 13px; line-height: 1.4;">
+            <div><strong id="pPeminta"></strong></div>
+            <div style="font-weight: bold;">NIPP: <span id="pNippPeminta"></span></div>
+          </div>
+        </div>
+
+        <!-- Box Pemberi -->
+        <div style="border: 2px solid #000; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; height: 110px; box-sizing: border-box; background: #fff;">
+          <div style="display: flex; justify-content: space-between; width: 100%; font-size: 12px; font-weight: bold;">
+            <span>Pemberi</span>
+            <span>TTD</span>
+          </div>
+          <div style="font-size: 13px; font-weight: bold; line-height: 1.4;">
+            <div>NIPP:</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
   </div>
 
   <!-- MODAL POPUP (STABIL & BEBAS CRASH) -->
@@ -306,7 +336,6 @@
   </div>
 
   <script>
-    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
@@ -365,7 +394,7 @@
         tglReservasi: document.getElementById('inTglReservasi').value,
         noSarana: document.getElementById('inNoSarana').value.toUpperCase(),
         dipoPengisian: document.getElementById('inDipo').value.toUpperCase(),
-        dataKa: formattedDataKa, // Menggunakan format otomatis (Contoh: KA 7009)
+        dataKa: formattedDataKa, // Menggunakan format otomatis (Contoh: KA 90)
         material: document.getElementById('inMaterial').value,
         noOrder: document.getElementById('inNoOrder').value,
         tglOrder: document.getElementById('inTglOrder').value,
@@ -401,7 +430,7 @@
         const printArea = document.getElementById('print-area');
         printArea.style.display = 'block';
 
-        // Konversi ke gambar (Menggunakan scale: 3 untuk ketajaman tinggi agar tulisan terbaca jelas)
+        // Konversi ke gambar (Menggunakan scale: 3 untuk ketajaman ekstra tinggi saat di-screenshot)
         html2canvas(printArea, { useCORS: true, scale: 3 }).then(canvas => {
           printArea.style.display = 'none';
           
