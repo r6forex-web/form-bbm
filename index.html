@@ -76,11 +76,18 @@
       border: none;
       vertical-align: middle;
     }
+    .logo-kai {
+      height: 32px;
+      display: block;
+    }
+    .logo-pertamina {
+      height: 18px;
+      display: block;
+    }
     .doc-title {
       text-align: center;
       font-size: 16px;
       font-weight: bold;
-      border-bottom: 1px solid #000;
       padding-bottom: 5px;
     }
 
@@ -189,24 +196,28 @@
     </form>
   </div>
 
-  <!-- AREA DOKUMEN CETAK -->
+  <!-- AREA DOKUMEN CETAK (PERSIS DENGAN GAMBAR + LOGO) -->
   <div id="print-area">
     <table class="header-table">
       <tr>
         <td style="width: 25%;">
-          <strong style="color: #0d47a1; font-style: italic; font-size: 18px;">KAI</strong>
+          <!-- Logo KAI Resmi -->
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" class="logo-kai" alt="Logo KAI">
         </td>
         <td style="text-align: center; width: 50%;">
-          <div style="border: 1px solid #000; padding: 2px 8px; display: inline-block; font-size: 10px; margin-bottom: 5px;">S</div>
+          <div style="border: 1px solid #000; padding: 2px 8px; display: inline-block; font-size: 10px; margin-bottom: 5px; font-weight: bold;">S</div>
           <div class="doc-title">Form Permintaan BBM</div>
         </td>
-        <td style="text-align: right; width: 25%; font-size: 9px; line-height: 1.1;">
-          <strong style="color: #0d47a1;">PERTAMINA</strong><br>
-          <span style="color: #e53935; font-weight: bold; font-size: 7px;">PATRA LOGISTIK</span>
+        <td style="width: 25%; text-align: right;">
+          <!-- Logo Pertamina Resmi + Sub-teks Patra Logistik -->
+          <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
+            <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" class="logo-pertamina" alt="Logo Pertamina">
+            <span style="font-size: 8px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
+          </div>
         </td>
       </tr>
       <tr>
-        <td colspan="3" style="font-size: 8px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 3px;">
+        <td colspan="3" style="font-size: 8px; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 3px; padding-top: 5px;">
           Diisi Oleh PT. Kereta Api Indonesia (Persero)
         </td>
       </tr>
@@ -277,10 +288,9 @@
   </div>
 
   <script>
-    // MASUKKAN URL WEB APP ANDA DI SINI
-    const WEB_APP_URL = 'URL_WEB_APP_ANDA_DISINI';
+    // URL Web App Google Sheets Anda
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
-    // Fungsi untuk membuat format tanggal hari ini bahasa Indonesia (Contoh: 24 Mei 2026)
     function getTanggalHariIni() {
       const namaBulan = [
         "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -293,21 +303,18 @@
       return `${tanggal} ${bulan} ${tahun}`;
     }
 
-    // Fungsi yang otomatis berjalan saat halaman dibuka
     window.addEventListener('DOMContentLoaded', () => {
-      // 1. Isi Tanggal otomatis
       const tanggalSekarang = getTanggalHariIni();
       document.getElementById('inTglReservasi').value = tanggalSekarang;
       document.getElementById('inTglOrder').value = tanggalSekarang;
 
-      // 2. Ambil No Reservasi & No Order berikutnya dari Google Sheets
+      // Mengambil nomor otomatis dari Apps Script
       fetch(WEB_APP_URL)
         .then(response => response.json())
         .then(data => {
           document.getElementById('inNoReservasi').value = data.nextReservasi;
           document.getElementById('inNoOrder').value = data.nextOrder;
           
-          // Sembunyikan teks loading, aktifkan tombol submit
           document.getElementById('loadingText').style.display = 'none';
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
@@ -315,11 +322,10 @@
         })
         .catch(error => {
           console.error('Error fetching auto number:', error);
-          document.getElementById('loadingText').innerText = 'Gagal memuat nomor otomatis. Coba segarkan halaman.';
+          document.getElementById('loadingText').innerHTML = 'Gagal memuat nomor otomatis. Pastikan status penerapan Anda sudah diatur ke "Siapa saja" (Anyone).';
         });
     });
 
-    // Handle submit form
     document.getElementById('bbmForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
@@ -342,7 +348,6 @@
         nippPeminta: document.getElementById('inNippPeminta').value
       };
 
-      // Terapkan ke area cetak
       document.getElementById('pNoReservasi').innerText = payload.noReservasi;
       document.getElementById('pTglReservasi').innerText = payload.tglReservasi;
       document.getElementById('pNoSarana').innerText = payload.noSarana;
@@ -356,7 +361,6 @@
       document.getElementById('pPeminta').innerText = payload.peminta.toUpperCase();
       document.getElementById('pNippPeminta').innerText = payload.nippPeminta;
 
-      // Kirim data ke Google Sheets
       fetch(WEB_APP_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -369,10 +373,8 @@
         submitBtn.disabled = false;
         submitBtn.innerText = 'Simpan & Cetak';
         
-        // Buka dialog print
         window.print();
         
-        // Segarkan halaman setelah print agar nomor otomatisnya memperbarui ke nomor berikutnya
         setTimeout(() => {
           window.location.reload();
         }, 1000);
