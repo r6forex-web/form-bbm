@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Permintaan BBM</title>
   
-  <!-- Pustaka html2pdf untuk konversi otomatis ke PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Pustaka html2canvas untuk merubah formulir menjadi GAMBAR/FOTO -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     body {
@@ -61,21 +61,21 @@
       background-color: #004085;
     }
 
-    /* Template yang akan dicetak (Awalnya disembunyikan di layar biasa) */
+    /* Template yang akan diconvert (Awalnya disembunyikan) */
     #print-area {
       display: none;
       width: 100%;
       max-width: 1000px;
       margin: 0 auto;
       background-color: #fff;
-      padding: 10px;
+      padding: 20px;
     }
 
-    /* Struktur Dokumen Cetak */
+    /* Struktur Dokumen */
     .header-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
     .header-table td {
       border: none;
@@ -196,12 +196,11 @@
     </form>
   </div>
 
-  <!-- AREA DOKUMEN CETAK (PERSIS DENGAN GAMBAR + LOGO) -->
+  <!-- AREA KERTAS DOKUMEN YANG AKAN DI-CONVERT -->
   <div id="print-area">
     <table class="header-table">
       <tr>
         <td style="width: 25%;">
-          <!-- Logo KAI Resmi -->
           <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" class="logo-kai" alt="Logo KAI">
         </td>
         <td style="text-align: center; width: 50%;">
@@ -209,7 +208,6 @@
           <div class="doc-title">Form Permintaan BBM</div>
         </td>
         <td style="width: 25%; text-align: right;">
-          <!-- Logo Pertamina Resmi + Sub-teks Patra Logistik -->
           <div style="display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1;">
             <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pertamina_Logo.svg" class="logo-pertamina" alt="Logo Pertamina">
             <span style="font-size: 8px; font-weight: bold; color: #00549c; letter-spacing: 0.5px; margin-top: 3px;">PATRA LOGISTIK</span>
@@ -287,8 +285,22 @@
     </table>
   </div>
 
+  <!-- MODAL POPUP UNTUK HP (MENAMPILKAN GAMBAR AGAR BISA DISIMPAN KE GALERI) -->
+  <div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; overflow-y: auto; padding: 10px; box-sizing: border-box;">
+    <div style="background: white; padding: 15px; border-radius: 8px; max-width: 95%; text-align: center; box-sizing: border-box;">
+      <h3 style="color: #0056b3; margin-top: 0; font-size: 16px;">Hasil Form Permintaan BBM</h3>
+      <p style="font-size: 11px; color: #333; margin-bottom: 12px; font-weight: bold; background: #e3f2fd; padding: 8px; border-radius: 4px; line-height: 1.4;">
+        👉 Tekan dan tahan (sentuh lama) gambar di bawah ini, lalu pilih <strong>"Simpan Gambar"</strong> / <strong>"Download Gambar"</strong> untuk menyimpan ke Galeri. <br>(Atau Anda bisa langsung mengambil Screenshot layar).
+      </p>
+      
+      <!-- Wadah penampung gambar yang di-convert -->
+      <div id="modalImageContainer" style="border: 1px solid #ccc; padding: 5px; background: white; width: 100%; box-sizing: border-box;"></div>
+      
+      <button onclick="closeModal()" style="margin-top: 15px; background: #d32f2f; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: auto; font-weight: bold;">Tutup & Buat Form Baru</button>
+    </div>
+  </div>
+
   <script>
-    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
@@ -318,7 +330,7 @@
           document.getElementById('loadingText').style.display = 'none';
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Simpan & Download PDF';
+          submitBtn.innerText = 'Simpan & Buat Gambar';
         })
         .catch(error => {
           console.error('Error fetching auto number:', error);
@@ -326,12 +338,18 @@
         });
     });
 
+    // Fungsi menutup modal dan memuat ulang halaman
+    function closeModal() {
+      document.getElementById('imageModal').style.display = 'none';
+      window.location.reload();
+    }
+
     document.getElementById('bbmForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Menyimpan & Membuat PDF...';
+      submitBtn.innerText = 'Menyimpan & Membuat Gambar...';
 
       const payload = {
         noReservasi: document.getElementById('inNoReservasi').value,
@@ -348,7 +366,7 @@
         nippPeminta: document.getElementById('inNippPeminta').value
       };
 
-      // Terapkan data ke area cetak
+      // Terapkan data ke area kertas dokumen
       document.getElementById('pNoReservasi').innerText = payload.noReservasi;
       document.getElementById('pTglReservasi').innerText = payload.tglReservasi;
       document.getElementById('pNoSarana').innerText = payload.noSarana;
@@ -372,37 +390,46 @@
         body: JSON.stringify(payload)
       })
       .then(() => {
-        // Tampilkan area cetak sesaat untuk proses convert ke PDF
         const printArea = document.getElementById('print-area');
-        printArea.style.display = 'block';
+        printArea.style.display = 'block'; // Tampilkan sementara agar bisa di-convert
 
-        // Atur konfigurasi PDF (Format Lanskap A4 agar persis seperti gambar awal)
-        const opt = {
-          margin:       [15, 15, 15, 15], // batas pinggir kertas (atas, kiri, bawah, kanan)
-          filename:     `Permintaan_BBM_${payload.noReservasi}.pdf`,
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true }, // Menggunakan opsi CORS agar logo ter-render dengan baik
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' } // format kertas Lanskap
-        };
+        // Convert HTML ke gambar PNG menggunakan html2canvas
+        html2canvas(printArea, { useCORS: true, scale: 2 }).then(canvas => {
+          printArea.style.display = 'none'; // Sembunyikan kembali
+          
+          const imgDataUrl = canvas.toDataURL('image/png');
+          
+          // Deteksi apakah dijalankan di HP (termasuk APK) atau Komputer biasa
+          const isHP = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        // Mulai download otomatis ke PDF
-        html2pdf().set(opt).from(printArea).save().then(() => {
-          // Sembunyikan kembali area cetak setelah selesai membuat PDF
-          printArea.style.display = 'none';
-          
-          submitBtn.disabled = false;
-          submitBtn.innerText = 'Simpan & Download PDF';
-          
-          // Memuat ulang halaman otomatis agar nomor berlanjut ke nomor berikutnya
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          if (isHP) {
+            // JIKA DI HP / APK: Tampilkan modal popup berisi gambar
+            const container = document.getElementById('modalImageContainer');
+            container.innerHTML = `<img src="${imgDataUrl}" style="width: 100%; height: auto; display: block;" alt="Hasil Form BBM">`;
+            document.getElementById('imageModal').style.display = 'flex';
+            
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Simpan & Buat Gambar';
+          } else {
+            // JIKA DI KOMPUTER: Otomatis download sebagai file foto PNG biasa
+            const link = document.createElement('a');
+            link.download = `Permintaan_BBM_${payload.noReservasi}.png`;
+            link.href = imgDataUrl;
+            link.click();
+            
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Simpan & Buat Gambar';
+            
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          }
         });
       })
       .catch(error => {
         alert('Gagal menyimpan: ' + error);
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Simpan & Download PDF';
+        submitBtn.innerText = 'Simpan & Buat Gambar';
       });
     });
   </script>
