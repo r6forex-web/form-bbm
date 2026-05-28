@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Form Permintaan BBM</title>
+  
+  <!-- Pustaka html2pdf untuk konversi otomatis ke PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -57,13 +61,14 @@
       background-color: #004085;
     }
 
-    /* Template yang akan dicetak */
+    /* Template yang akan dicetak (Awalnya disembunyikan di layar biasa) */
     #print-area {
       display: none;
       width: 100%;
       max-width: 1000px;
       margin: 0 auto;
       background-color: #fff;
+      padding: 10px;
     }
 
     /* Struktur Dokumen Cetak */
@@ -77,11 +82,11 @@
       vertical-align: middle;
     }
     .logo-kai {
-      height: 32px;
+      height: 35px;
       display: block;
     }
     .logo-pertamina {
-      height: 18px;
+      height: 20px;
       display: block;
     }
     .doc-title {
@@ -118,21 +123,6 @@
     .signature-box {
       height: 70px;
     }
-
-    /* CSS Khusus Saat Cetak */
-    @media print {
-      body {
-        background-color: #fff;
-        margin: 0;
-        padding: 0;
-      }
-      .form-container, button {
-        display: none !important;
-      }
-      #print-area {
-        display: block !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -140,7 +130,7 @@
   <!-- FORM INPUT (TAMPIL DI LAYAR) -->
   <div class="form-container" id="input-form-container">
     
-    <!-- Logo Atas di Layar Input agar Terlihat Langsung -->
+    <!-- Logo Atas di Layar Input -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">
       <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Logo_PT_Kereta_Api_Indonesia_(Persero)_2020.svg" style="height: 25px;" alt="Logo KAI">
       <div style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1;">
@@ -298,6 +288,7 @@
   </div>
 
   <script>
+    // URL Web App Google Sheets Anda
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzAxOPh3QXVPKaWsOiCLYViYOstRphIJC22wjzs4OwrfHrWcZqQnHr1aF-HuU80qhl7/exec';
 
     function getTanggalHariIni() {
@@ -317,6 +308,7 @@
       document.getElementById('inTglReservasi').value = tanggalSekarang;
       document.getElementById('inTglOrder').value = tanggalSekarang;
 
+      // Mengambil nomor otomatis dari Apps Script
       fetch(WEB_APP_URL)
         .then(response => response.json())
         .then(data => {
@@ -326,7 +318,7 @@
           document.getElementById('loadingText').style.display = 'none';
           const submitBtn = document.getElementById('submitBtn');
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Simpan & Cetak';
+          submitBtn.innerText = 'Simpan & Download PDF';
         })
         .catch(error => {
           console.error('Error fetching auto number:', error);
@@ -339,7 +331,7 @@
       
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Menyimpan...';
+      submitBtn.innerText = 'Menyimpan & Membuat PDF...';
 
       const payload = {
         noReservasi: document.getElementById('inNoReservasi').value,
@@ -356,6 +348,7 @@
         nippPeminta: document.getElementById('inNippPeminta').value
       };
 
+      // Terapkan data ke area cetak
       document.getElementById('pNoReservasi').innerText = payload.noReservasi;
       document.getElementById('pTglReservasi').innerText = payload.tglReservasi;
       document.getElementById('pNoSarana').innerText = payload.noSarana;
@@ -369,6 +362,7 @@
       document.getElementById('pPeminta').innerText = payload.peminta.toUpperCase();
       document.getElementById('pNippPeminta').innerText = payload.nippPeminta;
 
+      // Kirim data ke Google Sheets (POST)
       fetch(WEB_APP_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -378,19 +372,37 @@
         body: JSON.stringify(payload)
       })
       .then(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Simpan & Cetak';
-        
-        window.print();
-        
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // Tampilkan area cetak sesaat untuk proses convert ke PDF
+        const printArea = document.getElementById('print-area');
+        printArea.style.display = 'block';
+
+        // Atur konfigurasi PDF (Format Lanskap A4 agar persis seperti gambar awal)
+        const opt = {
+          margin:       [15, 15, 15, 15], // batas pinggir kertas (atas, kiri, bawah, kanan)
+          filename:     `Permintaan_BBM_${payload.noReservasi}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true }, // Menggunakan opsi CORS agar logo ter-render dengan baik
+          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' } // format kertas Lanskap
+        };
+
+        // Mulai download otomatis ke PDF
+        html2pdf().set(opt).from(printArea).save().then(() => {
+          // Sembunyikan kembali area cetak setelah selesai membuat PDF
+          printArea.style.display = 'none';
+          
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Simpan & Download PDF';
+          
+          // Memuat ulang halaman otomatis agar nomor berlanjut ke nomor berikutnya
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        });
       })
       .catch(error => {
         alert('Gagal menyimpan: ' + error);
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Simpan & Cetak';
+        submitBtn.innerText = 'Simpan & Download PDF';
       });
     });
   </script>
